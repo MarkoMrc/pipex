@@ -6,7 +6,7 @@
 /*   By: mmaric <mmaric@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/23 10:48:35 by mmaric            #+#    #+#             */
-/*   Updated: 2022/05/31 12:52:17 by mmaric           ###   ########.fr       */
+/*   Updated: 2022/06/09 10:49:53 by mmaric           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,6 @@ char	*ft_strnstr(const char *str, const char *tofind, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	**ft_split(char const *s, char c);
 int		ft_strlcpy(char *dest, const char *src, size_t size);
+char	**ft_free(char **str);
 
 #endif

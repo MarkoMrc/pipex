@@ -6,7 +6,7 @@
 /*   By: mmaric <mmaric@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/27 09:52:14 by mmaric            #+#    #+#             */
-/*   Updated: 2022/06/07 16:16:32 by mmaric           ###   ########.fr       */
+/*   Updated: 2022/06/09 15:04:31 by mmaric           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,38 +17,48 @@ char	*find_path(char *cmd, char **envp)
 	int		i;
 	char	**all_paths;
 	char	*path;
-	char	*to_find;
 
 	i = 0;
-	if (check_cmd(cmd) == 1 && access(cmd, X_OK) == 0)
-		return (cmd);
-	if (envp == NULL || *envp == NULL || *envp[i] == '\0')
+	if ((check_cmd(cmd) == 1)
+		|| (envp == NULL || *envp == NULL || *envp[i] == '\0'))
 		return (cmd);
 	while (envp[i] && ft_strnstr(envp[i], "PATH", 4) == 0)
 		i++;
 	all_paths = ft_split(envp[i], ':');
 	if (!all_paths)
-		return (0);
+		return (NULL);
 	i = 0;
-	while (all_paths[i])
+	path = ft_path(all_paths, cmd);
+	if (path)
 	{
-		if (check_cmd(cmd) == 0)
-		{
-			to_find = ft_strjoin(all_paths[i], "/");
-			path = ft_strjoin(to_find, cmd);
-			free(to_find);
-		}
-		else
-			path = ft_strjoin(all_paths[i], cmd);
+		ft_free(all_paths);
+		return (path);
+	}
+	ft_free(all_paths);
+	return (NULL);
+}
+
+char	*ft_path(char **str, char *cmd)
+{
+	char	*path;
+	char	*to_find;
+	int		i;
+
+	i = 0;
+	while (str[i])
+	{
+		to_find = ft_strjoin(str[i], "/");
+		if (!to_find)
+			return (NULL);
+		path = ft_strjoin(to_find, cmd);
+		if (!path)
+			return (NULL);
+		free(to_find);
 		if (access(path, X_OK) == 0)
 			return (path);
 		free(path);
 		i++;
 	}
-	i = -1;
-	while (all_paths[++i])
-		free(all_paths[i]);
-	free(all_paths);
 	return (NULL);
 }
 
@@ -57,7 +67,7 @@ char	*find_path(char *cmd, char **envp)
 // when last cmd found exit = 0 
 // when last cmd not found exit = 127
 
-void	to_exec(char *argv, char **envp)
+int	to_exec(char *argv, char **envp)
 {
 	char	*path;
 	char	**cmd;
@@ -65,44 +75,30 @@ void	to_exec(char *argv, char **envp)
 
 	i = -1;
 	cmd = ft_split(argv, ' ');
+	if (!cmd)
+		return (1);
 	path = find_path(cmd[0], envp);
 	if (!path)
 	{
-		print_err("Command not found: ", cmd[0]);
+		ft_putstr_fd(cmd[0], 2);
 		while (cmd[++i])
 			free(cmd[i]);
 		free(cmd);
-		exit(127);
+		return (127);
 	}
 	else if (execve(path, cmd, envp) == -1)
 	{
 		free(cmd);
 		free(path);
-		exit(EXIT_FAILURE);
-	}
-}
-
-// check if it's just a cmd or if it's an absolute path
-int	check_cmd(char *cmd)
-{
-	if (cmd[0] == '/')
 		return (1);
-	else
-		return (0);
-}
-
-void	print_err(char *error, char *cmd)
-{
-	ft_putstr_fd(error, 2);
-	ft_putstr_fd(cmd, 2);
-	write(2, "\n", 2);
-}
-
-void	ft_err(void)
-{
-	perror("Error");
-	exit(EXIT_FAILURE);
+	}
+	return (0);
 }
 
 //check all leaks and open fd 
 //valgrind --leak-check=full --track-fds=yes --trace-children=yes  env -i 
+
+// valgrind --leak-check=full --track-fds=yes --trace-children=yes  
+// --leak-check=full --show-leak-kinds=all env -i 
+// ./pipex /dev/stdin "/bin/cat" "bin/wc -l" /dev/stdout
+// ("usage : ./pipex file1 'cmd1' 'cmd2' file2\n");

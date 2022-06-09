@@ -6,7 +6,7 @@
 /*   By: mmaric <mmaric@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/27 09:51:48 by mmaric            #+#    #+#             */
-/*   Updated: 2022/06/07 16:17:15 by mmaric           ###   ########.fr       */
+/*   Updated: 2022/06/09 15:09:04 by mmaric           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,26 +21,22 @@ int	main(int argc, char **argv, char **envp)
 	pid_t	child2;
 
 	error = 0;
-	if (argc == 5)
-	{
-		if (pipe(fd) == -1)
-			ft_err();
-		child1 = fork();
-		if (child1 == -1)
-			ft_err();
-		if (child1 == 0)
-			processfils1(argv, envp, fd);
-		child2 = fork();
-		if (child2 == -1)
-			ft_err();
-		if (child2 == 0)
-			processfils2(argv, envp, fd);
-		processparent(child1, child2, fd, &error);
-	}
-	else
-	{
-		ft_err();
-		ft_putstr_fd("usage : ./pipex file1 'cmd1' 'cmd2' file2\n", 2);
-	}
+	if (argcheck(argc) == 1)
+		return (1);
+	if (pipe(fd) == -1)
+		ft_err("error");
+	child1 = fork();
+	if (child1 == -1)
+		ft_err("error");
+	if (child1 == 0)
+		if (printerr(processfils1(argv, envp, fd)) != 0)
+			return (1);
+	child2 = fork();
+	if (child2 == -1)
+		ft_err("error");
+	if (child2 == 0)
+		if (printerr(processfils2(argv, envp, fd)) != 0)
+			return (127);
+	processparent(child1, child2, fd, &error);
 	return (error);
 }
