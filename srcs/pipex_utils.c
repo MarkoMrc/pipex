@@ -6,7 +6,7 @@
 /*   By: mmaric <mmaric@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/27 09:52:14 by mmaric            #+#    #+#             */
-/*   Updated: 2022/06/09 15:04:31 by mmaric           ###   ########.fr       */
+/*   Updated: 2022/06/13 17:28:00 by mmaric           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,35 +64,30 @@ char	*ft_path(char **str, char *cmd)
 
 /* function to execute, split the argv into cmd */
 
-// when last cmd found exit = 0 
-// when last cmd not found exit = 127
-
-int	to_exec(char *argv, char **envp)
+void	to_exec(char *argv, char **envp)
 {
 	char	*path;
 	char	**cmd;
 	int		i;
 
 	i = -1;
+	if (argv[0] == '\0')
+		exit(127);
 	cmd = ft_split(argv, ' ');
 	if (!cmd)
-		return (1);
+		exit(EXIT_FAILURE);
 	path = find_path(cmd[0], envp);
 	if (!path)
 	{
-		ft_putstr_fd(cmd[0], 2);
 		while (cmd[++i])
 			free(cmd[i]);
 		free(cmd);
-		return (127);
+		exit(127);
 	}
-	else if (execve(path, cmd, envp) == -1)
+	if (execve(path, cmd, envp) == -1)
 	{
-		free(cmd);
-		free(path);
-		return (1);
+		free_perror(path, cmd);
 	}
-	return (0);
 }
 
 //check all leaks and open fd 
