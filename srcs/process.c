@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/pipex.h"
+#include "pipex.h"
 
 //read from infile, execute cmd1 with in as input
 void	processfils1(char **argv, char **envp, int *fd)

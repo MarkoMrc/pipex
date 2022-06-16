@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/pipex.h"
+#include "pipex.h"
 
 // check if it's just a cmd or if it's an absolute path
 int	check_cmd(char *cmd)

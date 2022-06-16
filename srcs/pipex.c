@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/pipex.h"
+#include "pipex.h"
 
 // faire une fonction pour la norminette
 int	main(int argc, char **argv, char **envp)
