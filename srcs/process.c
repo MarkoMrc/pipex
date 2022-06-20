@@ -21,7 +21,6 @@ void	processfils1(char **argv, char **envp, int *fd)
 	if (in == -1)
 	{
 		perror(argv[1]);
-		close(in);
 		close(fd[0]);
 		close(fd[1]);
 		exit(EXIT_FAILURE);
@@ -44,7 +43,6 @@ void	processfils2(char **argv, char **envp, int *fd)
 	if (out == -1)
 	{
 		perror(argv[4]);
-		close(out);
 		close(fd[0]);
 		close(fd[1]);
 		exit(EXIT_FAILURE);

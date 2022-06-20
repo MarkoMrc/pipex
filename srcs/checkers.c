@@ -15,6 +15,8 @@
 // check if it's just a cmd or if it's an absolute path
 int	check_cmd(char *cmd)
 {
+	if (!cmd)
+		return (1);
 	while (*cmd)
 	{
 		if (*cmd == '/')
